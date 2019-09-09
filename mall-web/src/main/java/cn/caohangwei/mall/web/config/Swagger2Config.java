@@ -1,4 +1,4 @@
-package cn.caohangwei.mall.ucenter.web.config;
+package cn.caohangwei.mall.web.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +19,7 @@ public class Swagger2Config {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("cn.caohangwei.mall.ucenter.web.controller"))
+                .apis(RequestHandlerSelectors.basePackage("cn.caohangwei.mall.web.controller"))
                 .paths(PathSelectors.any())
                 .build();
     }
