@@ -84,11 +84,13 @@ public class RedisUtil {
     /**
      * 获取单个对象
      */
-    public static <T> T get(BasePrefix prefix, String key, Class<T> clazz){
+    public static <T> T get(BasePrefix prefix, String name, Class<T> clazz){
         Jedis jedis = null;
         try {
             jedis = getJedis();
-            return (T) stringToBean(jedis.get(prefix + key),clazz);
+            String key = prefix.getPrefix() + name;
+            String value = jedis.get(key);
+            return (T) stringToBean(value,clazz);
         } finally {
             close(jedis);
         }
@@ -97,7 +99,7 @@ public class RedisUtil {
     /**
      * 保存对象
      */
-    public static <T> boolean set(BasePrefix prefix,String key,T value){
+    public static <T> boolean set(BasePrefix prefix,String name,T value){
         if(value == null){
             return false;
         }
@@ -105,10 +107,12 @@ public class RedisUtil {
         try {
             jedis = getJedis();
             String str = beanToString(value);
-            if(prefix.getExpireTime() <= 0){
-                jedis.set(prefix.getPrefix() + key,str);
+            String key = prefix.getPrefix() + name;
+            int expireTime = prefix.getExpireTime();
+            if(expireTime <= 0){
+                jedis.set(key,str);
             }else {
-                jedis.setex(prefix.getPrefix() + key,prefix.getExpireTime(),str);
+                jedis.setex(key,expireTime,str);
             }
             return true;
         } finally {
