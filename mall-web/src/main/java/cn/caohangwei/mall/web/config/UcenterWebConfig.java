@@ -1,4 +1,4 @@
-package cn.caohangwei.mall.ucenter.rpc.config;
+package cn.caohangwei.mall.web.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

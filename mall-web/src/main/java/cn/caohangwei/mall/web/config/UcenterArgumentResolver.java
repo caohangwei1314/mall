@@ -1,4 +1,4 @@
-package cn.caohangwei.mall.ucenter.rpc.config;
+package cn.caohangwei.mall.web.config;
 
 import cn.caohangwei.mall.common.util.CookieUtil;
 import cn.caohangwei.mall.common.util.RedisUtil;
