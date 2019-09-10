@@ -1,4 +1,4 @@
-package cn.caohangwei.mall.web.config;
+package cn.caohangwei.mall.ucenter.rpc.config;
 
 import cn.caohangwei.mall.common.util.CookieUtil;
 import cn.caohangwei.mall.common.util.RedisUtil;
@@ -25,10 +25,12 @@ public class UcenterArgumentResolver implements HandlerMethodArgumentResolver {
     @Autowired
     private UcenterUserService ucenterUserService;
 
+    @Override
     public boolean supportsParameter(MethodParameter methodParameter) {
         return methodParameter.getParameterType() == UcenterUser.class;
     }
 
+    @Override
     public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
         HttpServletRequest request = nativeWebRequest.getNativeRequest(HttpServletRequest.class);
         HttpServletResponse response = nativeWebRequest.getNativeResponse(HttpServletResponse.class);
