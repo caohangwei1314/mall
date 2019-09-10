@@ -11,5 +11,19 @@
     <dubbo:registry address="zookeeper://127.0.0.1:2181?client=zkclient" />
 
     <!-- 生成远程服务代理，可以和本地bean一样使用demoService -->
+
+    <!-- 用户服务-->
     <dubbo:reference id="ucenterUserService" interface="cn.caohangwei.mall.ucenter.rpc.api.UcenterUserService" />
+
+    <!-- 用户服务-->
+    <dubbo:reference id="shopGoodsService" interface="cn.caohangwei.mall.shop.rpc.api.ShopGoodsService" />
+
+    <!-- 用户服务-->
+    <dubbo:reference id="shopSpikeGoodsService" interface="cn.caohangwei.mall.shop.rpc.api.ShopSpikeGoodsService" />
+
+    <!-- 用户服务-->
+    <dubbo:reference id="shopOrderInfoService" interface="cn.caohangwei.mall.shop.rpc.api.ShopOrderInfoService" />
+
+    <!-- 用户服务-->
+    <dubbo:reference id="shopSpikeOrderService" interface="cn.caohangwei.mall.shop.rpc.api.ShopSpikeOrderService" />
 </beans>
