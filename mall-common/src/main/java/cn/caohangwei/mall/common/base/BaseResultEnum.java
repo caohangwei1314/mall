@@ -8,7 +8,10 @@ public enum  BaseResultEnum {
     PHONE_EMPTY(500002,"手机号码不能为空"),
     PHONE_ERROR(500003,"手机格式错误"),
     PHONE_NOT_EXISTS(500004,"用户不存在"),
-    PASSWORD_ERROR(500005,"用户不存在");
+    PASSWORD_ERROR(500005,"用户不存在"),
+    SPIKE_ERROR(500006,"秒杀失败"),
+    PURCHASED_ERROR(500007,"您已购买过"),
+    GOODS_ERROR(50008,"商品不存在");
 
     BaseResultEnum(int coed,String msg){
         this.code = coed;

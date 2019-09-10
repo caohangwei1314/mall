@@ -3,6 +3,7 @@ package cn.caohangwei.mall.common.base;
 import cn.caohangwei.mall.common.db.DataSourceEnum;
 import cn.caohangwei.mall.common.db.DynamicDataSource;
 import cn.caohangwei.mall.common.util.SpringContextUtil;
+import org.apache.ibatis.annotations.Param;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -40,7 +41,7 @@ public abstract class BaseServiceImpl<Mapper,Record,Example> implements BaseServ
         try {
             DynamicDataSource.setDataSource(DataSourceEnum.MASTER.getName());
             Method method = mapper.getClass().getDeclaredMethod("deleteByExample",example.getClass());
-            Object result = method.invoke(mapper.getClass(),example);
+            Object result = method.invoke(mapper,example);
             return Integer.valueOf(String.valueOf(result));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -54,11 +55,11 @@ public abstract class BaseServiceImpl<Mapper,Record,Example> implements BaseServ
     }
 
     @Override
-    public int deleteByPrimaryKey(Integer id) {
+    public int deleteByPrimaryKey(Long id) {
         try {
             DynamicDataSource.setDataSource(DataSourceEnum.MASTER.getName());
             Method method = mapper.getClass().getDeclaredMethod("deleteByPrimaryKey",id.getClass());
-            Object result = method.invoke(mapper.getClass(),id);
+            Object result = method.invoke(mapper,id);
             return Integer.valueOf(String.valueOf(result));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -76,7 +77,7 @@ public abstract class BaseServiceImpl<Mapper,Record,Example> implements BaseServ
         try {
             DynamicDataSource.setDataSource(DataSourceEnum.MASTER.getName());
             Method method = mapper.getClass().getDeclaredMethod("insert",record.getClass());
-            Object result = method.invoke(mapper.getClass(),record);
+            Object result = method.invoke(mapper,record);
             return Integer.valueOf(String.valueOf(result));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -94,7 +95,7 @@ public abstract class BaseServiceImpl<Mapper,Record,Example> implements BaseServ
         try {
             DynamicDataSource.setDataSource(DataSourceEnum.MASTER.getName());
             Method method = mapper.getClass().getDeclaredMethod("insertSelective",record.getClass());
-            Object result = method.invoke(mapper.getClass(),record);
+            Object result = method.invoke(mapper,record);
             return Integer.valueOf(String.valueOf(result));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -112,7 +113,7 @@ public abstract class BaseServiceImpl<Mapper,Record,Example> implements BaseServ
         try {
             DynamicDataSource.setDataSource(DataSourceEnum.SLAVE.getName());
             Method method = mapper.getClass().getDeclaredMethod("selectByExampleWithBLOBs",example.getClass());
-            Object result = method.invoke(mapper.getClass(),example);
+            Object result = method.invoke(mapper,example);
             return (List<Record>) result;
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -144,11 +145,11 @@ public abstract class BaseServiceImpl<Mapper,Record,Example> implements BaseServ
     }
 
     @Override
-    public Record selectByPrimaryKey(Integer id) {
+    public Record selectByPrimaryKey(Long id) {
         try {
             DynamicDataSource.setDataSource(DataSourceEnum.SLAVE.getName());
             Method method = mapper.getClass().getDeclaredMethod("selectByPrimaryKey",id.getClass());
-            Object result = method.invoke(mapper.getClass(),id);
+            Object result = method.invoke(mapper,id);
             return (Record) result;
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -162,17 +163,17 @@ public abstract class BaseServiceImpl<Mapper,Record,Example> implements BaseServ
     }
 
     @Override
-    public int updateByExampleSelective(Record record, Example example) {
+    public int updateByExampleSelective(@Param("record") Record record, @Param("example") Example example) {
         try {
             DynamicDataSource.setDataSource(DataSourceEnum.MASTER.getName());
-            Method method = mapper.getClass().getDeclaredMethod("updateByExampleSelective",record.getClass(),example.getClass());
-            Object result = method.invoke(mapper.getClass(),record,example);
-            return Integer.valueOf(String.valueOf(result));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            Method updateByExampleSelective = mapper.getClass().getDeclaredMethod("updateByExampleSelective", record.getClass(), example.getClass());
+            Object result = updateByExampleSelective.invoke(mapper, record, example);
+            return Integer.parseInt(String.valueOf(result));
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
         DynamicDataSource.clearDataSource();
@@ -180,17 +181,17 @@ public abstract class BaseServiceImpl<Mapper,Record,Example> implements BaseServ
     }
 
     @Override
-    public int updateByExampleWithBLOBs(Record record, Example example) {
+    public int updateByExampleWithBLOBs(@Param("record") Record record, @Param("example") Example example) {
         try {
             DynamicDataSource.setDataSource(DataSourceEnum.MASTER.getName());
-            Method method = mapper.getClass().getDeclaredMethod("updateByExampleWithBLOBs",record.getClass(),example.getClass());
-            Object result = method.invoke(mapper.getClass(),record,example);
-            return Integer.valueOf(String.valueOf(result));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            Method updateByExampleWithBLOBs = mapper.getClass().getDeclaredMethod("updateByExampleWithBLOBs", record.getClass(), example.getClass());
+            Object result = updateByExampleWithBLOBs.invoke(mapper, record, example);
+            return Integer.parseInt(String.valueOf(result));
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
         DynamicDataSource.clearDataSource();
@@ -198,17 +199,17 @@ public abstract class BaseServiceImpl<Mapper,Record,Example> implements BaseServ
     }
 
     @Override
-    public int updateByExample(Record record, Example example) {
+    public int updateByExample(@Param("record") Record record, @Param("example") Example example) {
         try {
             DynamicDataSource.setDataSource(DataSourceEnum.MASTER.getName());
-            Method method = mapper.getClass().getDeclaredMethod("updateByExample",record.getClass(),example.getClass());
-            Object result = method.invoke(mapper.getClass(),record,example);
-            return Integer.valueOf(String.valueOf(result));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            Method updateByExample = mapper.getClass().getDeclaredMethod("updateByExample", record.getClass(), example.getClass());
+            Object result = updateByExample.invoke(mapper, record, example);
+            return Integer.parseInt(String.valueOf(result));
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
         DynamicDataSource.clearDataSource();
@@ -220,7 +221,7 @@ public abstract class BaseServiceImpl<Mapper,Record,Example> implements BaseServ
         try {
             DynamicDataSource.setDataSource(DataSourceEnum.MASTER.getName());
             Method method = mapper.getClass().getDeclaredMethod("updateByExample",record.getClass());
-            Object result = method.invoke(mapper.getClass(),record);
+            Object result = method.invoke(mapper,record);
             return Integer.valueOf(String.valueOf(result));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -238,7 +239,7 @@ public abstract class BaseServiceImpl<Mapper,Record,Example> implements BaseServ
         try {
             DynamicDataSource.setDataSource(DataSourceEnum.MASTER.getName());
             Method method = mapper.getClass().getDeclaredMethod("updateByPrimaryKeyWithBLOBs",record.getClass());
-            Object result = method.invoke(mapper.getClass(),record);
+            Object result = method.invoke(mapper,record);
             return Integer.valueOf(String.valueOf(result));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -256,7 +257,7 @@ public abstract class BaseServiceImpl<Mapper,Record,Example> implements BaseServ
         try {
             DynamicDataSource.setDataSource(DataSourceEnum.MASTER.getName());
             Method method = mapper.getClass().getDeclaredMethod("updateByPrimaryKey",record.getClass());
-            Object result = method.invoke(mapper.getClass(),record);
+            Object result = method.invoke(mapper,record);
             return Integer.valueOf(String.valueOf(result));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();

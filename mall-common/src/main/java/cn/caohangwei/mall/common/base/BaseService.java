@@ -29,7 +29,7 @@ public interface BaseService<Record, Example> {
      * @param id
      * @return
      */
-    int deleteByPrimaryKey(Integer id);
+    int deleteByPrimaryKey(Long id);
 
     /**
      * insert record.
@@ -64,7 +64,7 @@ public interface BaseService<Record, Example> {
      * @param id
      * @return
      */
-    Record selectByPrimaryKey(Integer id);
+    Record selectByPrimaryKey(Long id);
 
     /**
      * Update by example selective.
