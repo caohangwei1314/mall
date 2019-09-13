@@ -27,4 +27,6 @@ public interface ShopSpikeGoodsMapper {
     int updateByPrimaryKeySelective(ShopSpikeGoods record);
 
     int updateByPrimaryKey(ShopSpikeGoods record);
+
+    int incrGoodsStockByGoodsId(@Param("goodsId") Long goodsId);
 }
