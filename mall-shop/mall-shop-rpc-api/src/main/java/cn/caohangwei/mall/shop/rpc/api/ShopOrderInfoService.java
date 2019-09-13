@@ -12,5 +12,5 @@ import cn.caohangwei.mall.shop.dao.model.ShopSpikeGoods;
 * Created by PinuoC on 2019/9/9.
 */
 public interface ShopOrderInfoService extends BaseService<ShopOrderInfo, ShopOrderInfoExample> {
-    ShopOrderInfo goodsSpike(Long userId, ShopSpikeGoodsDetail goods);
+    ShopOrderInfo spikeGoods(Long userId,ShopSpikeGoodsDetail goodsId);
 }
