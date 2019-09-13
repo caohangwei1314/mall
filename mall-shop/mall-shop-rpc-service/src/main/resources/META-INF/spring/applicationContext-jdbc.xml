@@ -26,9 +26,9 @@
         <property name="username" value="${master.jdbc.username}"/>
         <property name="password" value="${master.jdbc.password}"/>
         <!-- 配置初始化大小、最小、最大 -->
-        <property name="initialSize" value="1"/>
-        <property name="minIdle" value="1"/>
-        <property name="maxActive" value="20"/>
+        <property name="initialSize" value="100"/>
+        <property name="minIdle" value="500"/>
+        <property name="maxActive" value="2000"/>
         <!-- 配置获取连接等待超时的时间 -->
         <property name="maxWait" value="60000"/>
         <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
@@ -52,9 +52,9 @@
         <property name="username" value="${slave.jdbc.username}"/>
         <property name="password" value="${slave.jdbc.password}"/>
         <!-- 配置初始化大小、最小、最大 -->
-        <property name="initialSize" value="1"/>
-        <property name="minIdle" value="1"/>
-        <property name="maxActive" value="20"/>
+        <property name="initialSize" value="100"/>
+        <property name="minIdle" value="100"/>
+        <property name="maxActive" value="100"/>
         <!-- 配置获取连接等待超时的时间 -->
         <property name="maxWait" value="60000"/>
         <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
