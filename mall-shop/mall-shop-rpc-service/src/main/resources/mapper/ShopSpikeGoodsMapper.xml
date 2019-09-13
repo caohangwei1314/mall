@@ -225,4 +225,9 @@
       spike_end_time = #{spikeEndTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <update id="incrGoodsStockByGoodsId" parameterType="java.lang.Long">
+    update shop_spike_goods
+    set spike_stock = spike_stock - 1
+    where goods_id = #{goodsId,jdbcType=BIGINT}
+  </update>
 </mapper>
