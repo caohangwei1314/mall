@@ -9,26 +9,29 @@
 
     <dubbo:application name="mall-shop-rpc-service"/>
 
-    <dubbo:registry address="zookeeper://127.0.0.1:2181?client=zkclient"/>
+    <dubbo:registry address="zookeeper://115.159.90.137:2181?client=zkclient"/>
 
     <dubbo:protocol name="dubbo" port="20881"/>
+
+    <!--默认配置-->
+    <dubbo:provider connections="1000" timeout="100000"/>
 
     <!--<dubbo:monitor protocol="registry"/>-->
 
     <!-- 商品服务 -->
     <bean id="shopGoodsService" class="cn.caohangwei.mall.shop.rpc.service.impl.ShopGoodsServiceImpl"/>
-    <dubbo:service interface="cn.caohangwei.mall.shop.rpc.api.ShopGoodsService" ref="shopGoodsService" timeout="10000"/>
+    <dubbo:service interface="cn.caohangwei.mall.shop.rpc.api.ShopGoodsService" ref="shopGoodsService"/>
 
     <!-- 商品服务 -->
     <bean id="shopSpikeGoodsService" class="cn.caohangwei.mall.shop.rpc.service.impl.ShopSpikeGoodsServiceImpl"/>
-    <dubbo:service interface="cn.caohangwei.mall.shop.rpc.api.ShopSpikeGoodsService" ref="shopSpikeGoodsService" timeout="10000"/>
+    <dubbo:service interface="cn.caohangwei.mall.shop.rpc.api.ShopSpikeGoodsService" ref="shopSpikeGoodsService"/>
 
     <!-- 订单服务 -->
     <bean id="shopOrderInfoService" class="cn.caohangwei.mall.shop.rpc.service.impl.ShopOrderInfoServiceImpl"/>
-    <dubbo:service interface="cn.caohangwei.mall.shop.rpc.api.ShopOrderInfoService" ref="shopOrderInfoService" timeout="10000"/>
+    <dubbo:service interface="cn.caohangwei.mall.shop.rpc.api.ShopOrderInfoService" ref="shopOrderInfoService"/>
 
     <!-- 商品服务 -->
     <bean id="shopSpikeOrderService" class="cn.caohangwei.mall.shop.rpc.service.impl.ShopSpikeOrderServiceImpl"/>
-    <dubbo:service interface="cn.caohangwei.mall.shop.rpc.api.ShopSpikeOrderService" ref="shopSpikeOrderService" timeout="10000"/>
+    <dubbo:service interface="cn.caohangwei.mall.shop.rpc.api.ShopSpikeOrderService" ref="shopSpikeOrderService"/>
 
 </beans>
