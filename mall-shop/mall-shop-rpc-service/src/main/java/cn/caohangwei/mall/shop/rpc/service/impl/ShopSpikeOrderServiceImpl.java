@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 * Created by PinuoC on 2019/9/9.
 */
 @Service
-@Transactional
 @BaseService
 public class ShopSpikeOrderServiceImpl extends BaseServiceImpl<ShopSpikeOrderMapper, ShopSpikeOrder, ShopSpikeOrderExample> implements ShopSpikeOrderService {
 

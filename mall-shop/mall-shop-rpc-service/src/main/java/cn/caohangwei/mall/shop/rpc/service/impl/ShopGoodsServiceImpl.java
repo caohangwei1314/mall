@@ -20,7 +20,6 @@ import java.util.List;
 * Created by PinuoC on 2019/9/9.
 */
 @Service
-@Transactional
 @BaseService
 public class ShopGoodsServiceImpl extends BaseServiceImpl<ShopGoodsMapper, ShopGoods, ShopGoodsExample> implements ShopGoodsService {
 

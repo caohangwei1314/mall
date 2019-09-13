@@ -19,7 +19,6 @@ import java.util.List;
 * Created by PinuoC on 2019/9/9.
 */
 @Service
-@Transactional
 @BaseService
 public class ShopSpikeGoodsServiceImpl extends BaseServiceImpl<ShopSpikeGoodsMapper, ShopSpikeGoods, ShopSpikeGoodsExample> implements ShopSpikeGoodsService {
 
