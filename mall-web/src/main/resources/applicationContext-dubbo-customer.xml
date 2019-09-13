@@ -8,22 +8,25 @@
     <dubbo:application name="mall-web"  />
 
     <!-- 使用multicast广播注册中心暴露发现服务地址 -->
-    <dubbo:registry address="zookeeper://127.0.0.1:2181?client=zkclient" />
+    <dubbo:registry address="zookeeper://localhost:2181?client=zkclient" />
+
+    <!--consumer 默认配置-->
+    <dubbo:consumer connections="1000" timeout="100000"/>
 
     <!-- 生成远程服务代理，可以和本地bean一样使用demoService -->
 
     <!-- 用户服务-->
-    <dubbo:reference id="ucenterUserService" interface="cn.caohangwei.mall.ucenter.rpc.api.UcenterUserService" />
+    <dubbo:reference id="ucenterUserService" interface="cn.caohangwei.mall.ucenter.rpc.api.UcenterUserService" check="false" />
 
     <!-- 用户服务-->
-    <dubbo:reference id="shopGoodsService" interface="cn.caohangwei.mall.shop.rpc.api.ShopGoodsService" />
+    <dubbo:reference id="shopGoodsService" interface="cn.caohangwei.mall.shop.rpc.api.ShopGoodsService" check="false"/>
 
     <!-- 用户服务-->
-    <dubbo:reference id="shopSpikeGoodsService" interface="cn.caohangwei.mall.shop.rpc.api.ShopSpikeGoodsService" />
+    <dubbo:reference id="shopSpikeGoodsService" interface="cn.caohangwei.mall.shop.rpc.api.ShopSpikeGoodsService" check="false"/>
 
     <!-- 用户服务-->
-    <dubbo:reference id="shopOrderInfoService" interface="cn.caohangwei.mall.shop.rpc.api.ShopOrderInfoService" />
+    <dubbo:reference id="shopOrderInfoService" interface="cn.caohangwei.mall.shop.rpc.api.ShopOrderInfoService" check="false"/>
 
     <!-- 用户服务-->
-    <dubbo:reference id="shopSpikeOrderService" interface="cn.caohangwei.mall.shop.rpc.api.ShopSpikeOrderService" />
+    <dubbo:reference id="shopSpikeOrderService" interface="cn.caohangwei.mall.shop.rpc.api.ShopSpikeOrderService" check="false"/>
 </beans>
