@@ -37,9 +37,11 @@ public class UcenterArgumentResolver implements HandlerMethodArgumentResolver {
 
         String paramToken = request.getParameter(UcenterConstant.COOKIE_TOKEN_NAME);
         String cookieToken = null;
-        for (Cookie cookie : request.getCookies()) {
-            if (UcenterConstant.COOKIE_TOKEN_NAME.equals(cookie.getName())) {
-                cookieToken = cookie.getValue();
+        if(request.getCookies() != null && request.getCookies().length > 0){
+            for (Cookie cookie : request.getCookies()) {
+                if (UcenterConstant.COOKIE_TOKEN_NAME.equals(cookie.getName())) {
+                    cookieToken = cookie.getValue();
+                }
             }
         }
         if (StringUtils.isEmpty(cookieToken) && StringUtils.isEmpty(paramToken)) {
