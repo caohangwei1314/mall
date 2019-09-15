@@ -1,7 +1,6 @@
 package cn.caohangwei.mall.web.controller;
 
 import cn.caohangwei.mall.common.base.BaseController;
-import cn.caohangwei.mall.common.base.BasePrefix;
 import cn.caohangwei.mall.common.base.BaseResult;
 import cn.caohangwei.mall.common.base.BaseResultEnum;
 import cn.caohangwei.mall.common.util.RedisUtil;
@@ -12,6 +11,7 @@ import cn.caohangwei.mall.shop.rpc.api.ShopOrderInfoService;
 import cn.caohangwei.mall.shop.rpc.api.ShopSpikeGoodsService;
 import cn.caohangwei.mall.shop.rpc.api.ShopSpikeOrderService;
 import cn.caohangwei.mall.ucenter.dao.model.UcenterUser;
+import cn.caohangwei.mall.web.config.GoodsDetail;
 import cn.caohangwei.mall.web.config.WebCachePrefix;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -63,12 +63,11 @@ public class GoodsController extends BaseController {
         return html;
     }
 
-    @RequestMapping("/to_detail/{goodsId}")
-    public String toDetail(Model model, UcenterUser user,
+    @RequestMapping("/detail/{goodsId}")
+    @ResponseBody
+    public BaseResult toDetail(UcenterUser user,
                            @PathVariable("goodsId") long goodsId) {
-        model.addAttribute("user", user);
         ShopSpikeGoodsDetail shopSpikeGoodsDetail = shopGoodsService.getGoodsDetailByPrimaryKey(goodsId);
-        model.addAttribute("shopGoods", shopSpikeGoodsDetail);
         long startAt = shopSpikeGoodsDetail.getSpikeStartTime().getTime();
         long endAt = shopSpikeGoodsDetail.getSpikeEndTime().getTime();
         long now = System.currentTimeMillis();
@@ -84,34 +83,46 @@ public class GoodsController extends BaseController {
             status = 1;
             remainSeconds = 0;
         }
-        model.addAttribute("status", status);
-        model.addAttribute("remainSeconds", remainSeconds);
-        return "goods_detail";
+        GoodsDetail goodsDetail = new GoodsDetail();
+        goodsDetail.setStatus(status);
+        goodsDetail.setRemainSeconds(remainSeconds);
+        goodsDetail.setShopSpikeGoodsDetail(shopSpikeGoodsDetail);
+        goodsDetail.setUcenterUser(user);
+        return new BaseResult(BaseResultEnum.SUCCESS,goodsDetail);
     }
 
 
     @RequestMapping(value = "/spike",method = RequestMethod.POST)
-    public String goodsSpike(Model model, UcenterUser user,
+    @ResponseBody
+    public BaseResult goodsSpike(Model model, UcenterUser user,
                              @RequestParam("goodsId") Long goodsId){
         if(null == user){
-            return "login";
+//            return "login";
+            return new BaseResult(BaseResultEnum.SESSION_ERROR,null);
         }
         ShopSpikeGoodsDetail goods = shopGoodsService.getGoodsDetailByPrimaryKey(goodsId);
         if(goods.getSpikeStock() <= 0){
-            model.addAttribute("result",new BaseResult(BaseResultEnum.SPIKE_ERROR,null));
-            return "goods_spike_failed";
+//            model.addAttribute("result",new BaseResult(BaseResultEnum.SPIKE_ERROR,null));
+//            return "goods_spike_failed";
+            return new BaseResult(BaseResultEnum.SPIKE_ERROR,null);
         }
-        ShopSpikeOrderExample shopSpikeOrderExample = new ShopSpikeOrderExample();
-        shopSpikeOrderExample.createCriteria().andUserIdEqualTo(user.getId());
-        List<ShopSpikeOrder> shopSpikeOrders = shopSpikeOrderService.selectByExample(shopSpikeOrderExample);
-        // 判断是否购买
-        if(shopSpikeOrders.size() > 0 && null != shopSpikeOrders){
-            model.addAttribute("result",new BaseResult(BaseResultEnum.PURCHASED_ERROR,null));
-            return "goods_spike_failed";
+//        ShopSpikeOrderExample shopSpikeOrderExample = new ShopSpikeOrderExample();
+//        shopSpikeOrderExample.createCriteria().andUserIdEqualTo(user.getId()).andGoodsIdEqualTo(goods.getId());
+//        List<ShopSpikeOrder> shopSpikeOrders = shopSpikeOrderService.selectByExample(shopSpikeOrderExample);
+//        // 判断是否购买
+//        if(shopSpikeOrders.size() > 0 && null != shopSpikeOrders){
+////            model.addAttribute("result",new BaseResult(BaseResultEnum.PURCHASED_ERROR,null));
+////            return "goods_spike_failed";
+//            return new BaseResult(BaseResultEnum.PURCHASED_ERROR,null);
+//        }
+        ShopSpikeOrder shopSpikeOrder = RedisUtil.get(WebCachePrefix.SPIKE_ORDER,"",ShopSpikeOrder.class);
+        if(null != shopSpikeOrder){
+            return new BaseResult(BaseResultEnum.PURCHASED_ERROR,null);
         }
         ShopOrderInfo orderInfo = shopOrderInfoService.spikeGoods(user.getId(), goods);
-        model.addAttribute("orderInfo",orderInfo);
-        model.addAttribute("goods",goods);
-        return "order_detail";
+//        model.addAttribute("orderInfo",orderInfo);
+//        model.addAttribute("goods",goods);
+//        return "order_detail";
+        return new BaseResult(BaseResultEnum.SUCCESS,orderInfo);
     }
 }

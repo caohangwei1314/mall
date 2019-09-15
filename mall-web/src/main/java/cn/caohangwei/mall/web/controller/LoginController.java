@@ -46,10 +46,10 @@ public class LoginController extends BaseController {
                               @RequestParam(value = COOKIE_TOKEN_NAME,required = false) String paramToken,
                               HttpServletResponse response){
         LOGGER.info(record.toString());
-        //判断是否登陆过
-        if (StringUtils.isEmpty(cookieToken) && StringUtils.isEmpty(paramToken)) {
-            return null;
-        }
+//        //判断是否登陆过
+//        if (StringUtils.isEmpty(cookieToken) && StringUtils.isEmpty(paramToken)) {
+//            return null;
+//        }
         String token = StringUtils.isEmpty(paramToken) ? cookieToken : paramToken;
         UcenterUser user = RedisUtil.get(UcenterUserPrefix.token,token,UcenterUser.class);
         if(user==null){

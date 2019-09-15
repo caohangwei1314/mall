@@ -9,7 +9,7 @@
 
     <dubbo:application name="mall-shop-rpc-service"/>
 
-    <dubbo:registry address="zookeeper://115.159.90.137:2181?client=zkclient"/>
+    <dubbo:registry address="zookeeper://localhost:2181?client=zkclient"/>
 
     <dubbo:protocol name="dubbo" port="20881"/>
 

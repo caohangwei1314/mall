@@ -228,6 +228,6 @@
   <update id="incrGoodsStockByGoodsId" parameterType="java.lang.Long">
     update shop_spike_goods
     set spike_stock = spike_stock - 1
-    where goods_id = #{goodsId,jdbcType=BIGINT}
+    where goods_id = #{goodsId,jdbcType=BIGINT} and spike_stock > 0
   </update>
 </mapper>

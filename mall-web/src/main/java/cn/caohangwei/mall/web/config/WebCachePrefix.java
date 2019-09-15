@@ -8,5 +8,7 @@ public class WebCachePrefix extends BasePrefix {
 
     public static WebCachePrefix GOODS_LIST = new WebCachePrefix("goods-list",DEFAULT_EXPIRE_TIME);
 
+    public static WebCachePrefix SPIKE_ORDER = new WebCachePrefix("spike-order",0);
+
     public WebCachePrefix(String prefix, int expireTime){super(prefix,expireTime);}
 }
