@@ -11,7 +11,9 @@ public enum  BaseResultEnum {
     PASSWORD_ERROR(500005,"用户不存在"),
     SPIKE_ERROR(500006,"秒杀失败"),
     PURCHASED_ERROR(500007,"您已购买过"),
-    GOODS_ERROR(50008,"商品不存在");
+    GOODS_ERROR(50008,"商品不存在"),
+    SESSION_ERROR(50009,"请登录"),
+    ORDER_NOT_EXISTS(50010,"订单不存在");
 
     BaseResultEnum(int coed,String msg){
         this.code = coed;
