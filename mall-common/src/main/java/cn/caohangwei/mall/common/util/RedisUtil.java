@@ -50,37 +50,6 @@ public class RedisUtil {
         }
     }
 
-    private static <T> String beanToString(T value){
-        return JSON.toJSONString(value);
-    }
-
-    private static <T> T stringToBean(String value,Class<T> clazz){
-        if(null == value || "".equals(value) || null == clazz){
-            return null;
-        }
-        if(String.class == clazz){
-            return (T) value;
-        } else if(boolean.class == clazz || Boolean.class == clazz){
-            return (T) Boolean.valueOf(value);
-        }else if(byte.class == clazz || Byte.class == clazz){
-            return (T) Byte.valueOf(value);
-        }else if(short.class == clazz || Short.class == clazz){
-            return (T) Short.valueOf(value);
-        }else if(char.class == clazz || Character.class == clazz){
-            return (T) Character.valueOf(value.charAt(0));
-        }else if(int.class == clazz || Integer.class == clazz){
-            return (T) Integer.valueOf(value);
-        }else if(float.class == clazz || Float.class == clazz){
-            return (T) Float.valueOf(value);
-        }else if(long.class == clazz || Long.class == clazz){
-            return (T) Long.valueOf(value);
-        }else if(double.class == clazz || Double.class == clazz){
-            return (T) Double.valueOf(value);
-        }else {
-            return JSON.toJavaObject(JSON.parseObject(value),clazz);
-        }
-    }
-
     /**
      * 获取单个对象
      */
@@ -90,7 +59,7 @@ public class RedisUtil {
             jedis = getJedis();
             String key = prefix.getPrefix() + name;
             String value = jedis.get(key);
-            return (T) stringToBean(value,clazz);
+            return (T) JSONUtil.stringToBean(value,clazz);
         } finally {
             close(jedis);
         }
@@ -106,7 +75,7 @@ public class RedisUtil {
         Jedis jedis = null;
         try {
             jedis = getJedis();
-            String str = beanToString(value);
+            String str = JSONUtil.beanToString(value);
             String key = prefix.getPrefix() + name;
             int expireTime = prefix.getExpireTime();
             if(expireTime <= 0){
