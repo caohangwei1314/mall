@@ -16,5 +16,7 @@ public class ShopGoodsPrefix extends BasePrefix {
 
     public static ShopGoodsPrefix SPIKE_GOODS_PATH = new ShopGoodsPrefix("spike-goods-path",60);
 
+    public static ShopGoodsPrefix VERIFY_CODE = new ShopGoodsPrefix("verify-code",60);
+
     public ShopGoodsPrefix(String prefix, int expireTime){super(prefix,expireTime);}
 }

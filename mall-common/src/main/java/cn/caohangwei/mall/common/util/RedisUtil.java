@@ -90,6 +90,24 @@ public class RedisUtil {
     }
 
     /**
+     * 删除对象
+     */
+    public static <T> boolean delete(BasePrefix prefix,String name){
+        if(name == null){
+            return false;
+        }
+        Jedis jedis = null;
+        try {
+            jedis = getJedis();
+            String key = prefix.getPrefix() + name;
+            jedis.del(key);
+            return true;
+        } finally {
+            close(jedis);
+        }
+    }
+
+    /**
      * 判断是否存在
      */
     public static <T> boolean exists(BasePrefix prefix,String key){

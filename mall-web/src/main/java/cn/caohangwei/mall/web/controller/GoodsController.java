@@ -30,8 +30,17 @@ import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
+import javax.imageio.ImageIO;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.OutputStream;
+import java.util.Random;
+
 import static cn.caohangwei.mall.web.config.InitializingConfig.map;
 
 @Api(value = "商品系统", tags = "GoodsController")
@@ -150,9 +159,73 @@ public class GoodsController extends BaseController {
 
     @RequestMapping(value = "/spike/path",method = RequestMethod.GET)
     @ResponseBody
-    public BaseResult getSpikeGoodsPath(UcenterUser user,@RequestParam("goodsId") Long goodsId){
+    public BaseResult getSpikeGoodsPath(UcenterUser user,
+                                        @RequestParam("goodsId") Long goodsId,
+                                        @RequestParam("verifyCode") Integer verifyCode){
+        Integer code = RedisUtil.get(ShopGoodsPrefix.VERIFY_CODE,user.getId()+"_"+goodsId,Integer.class);
+        if(code == null || code-verifyCode != 0){
+            return new BaseResult(BaseResultEnum.VERIFY_ERROR,null);
+        }
+        RedisUtil.delete(ShopGoodsPrefix.VERIFY_CODE,user.getId()+"_"+goodsId);
         String str = MD5Util.md5(UUIDUtil.randomUUID() + "embassy");
         RedisUtil.set(ShopGoodsPrefix.SPIKE_GOODS_PATH,user.getId() + "_" + goodsId,str);
         return new BaseResult(BaseResultEnum.SUCCESS,str);
+    }
+
+    private static final char[] op = {'+','-','*'};
+
+    @RequestMapping(value = "/spike/verifyCode",method = RequestMethod.GET)
+    @ResponseBody
+    public BaseResult getVerifyCode(UcenterUser user,@RequestParam("goodsId") Long goodsId,HttpServletResponse response){
+        int width = 80;
+        int height = 32;
+        //create the image
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics g = image.getGraphics();
+        // set the background color
+        g.setColor(new Color(0xDCDCDC));
+        g.fillRect(0, 0, width, height);
+        // draw the border
+        g.setColor(Color.black);
+        g.drawRect(0, 0, width - 1, height - 1);
+        // create a random instance to generate the codes
+        Random rdm = new Random();
+        // make some confusion
+        for (int i = 0; i < 50; i++) {
+            int x = rdm.nextInt(width);
+            int y = rdm.nextInt(height);
+            g.drawOval(x, y, 0, 0);
+        }
+        // generate a random code
+        int num1 = rdm.nextInt(10);
+        int num2 = rdm.nextInt(10);
+        int num3 = rdm.nextInt(10);
+        char op1 = op[rdm.nextInt(3)];
+        char op2 = op[rdm.nextInt(3)];
+        String exp = "" + num1 + op1 + num2 + op2 + num3;
+        g.setColor(new Color(0, 100, 0));
+        g.setFont(new Font("Candara", Font.BOLD, 24));
+        g.drawString(exp, 8, 24);
+        g.dispose();
+        //把验证码存到redis中
+        int rnd = 0;
+        try {
+            ScriptEngineManager manager = new ScriptEngineManager();
+            ScriptEngine scriptEngine = manager.getEngineByName("JavaScript");
+            rnd = (Integer) scriptEngine.eval(exp);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        RedisUtil.set(ShopGoodsPrefix.VERIFY_CODE, user.getId()+"_"+goodsId, rnd);
+        try {
+            OutputStream out = response.getOutputStream();
+            ImageIO.write(image, "JPEG", out);
+            out.flush();
+            out.close();
+            return null;
+        }catch(Exception e) {
+            e.printStackTrace();
+            return new BaseResult(BaseResultEnum.SPIKE_ERROR,null);
+        }
     }
 }
