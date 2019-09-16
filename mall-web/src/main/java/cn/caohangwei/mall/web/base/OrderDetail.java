@@ -1,4 +1,4 @@
-package cn.caohangwei.mall.shop.dao.base;
+package cn.caohangwei.mall.web.base;
 
 import cn.caohangwei.mall.shop.dao.model.ShopGoods;
 import cn.caohangwei.mall.shop.dao.model.ShopOrderInfo;

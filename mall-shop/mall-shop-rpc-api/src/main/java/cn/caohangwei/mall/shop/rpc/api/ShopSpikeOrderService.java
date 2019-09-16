@@ -10,4 +10,7 @@ import cn.caohangwei.mall.shop.dao.model.ShopSpikeOrderExample;
 */
 public interface ShopSpikeOrderService extends BaseService<ShopSpikeOrder, ShopSpikeOrderExample> {
 
+    ShopSpikeOrder getSpikeOrderByUserIdGoodsId(Long userId,Long goodsId);
+
+    Long getSpikeResult(Long userId,Long goodsId);
 }

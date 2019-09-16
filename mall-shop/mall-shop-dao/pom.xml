@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>cn.caohangwei</groupId>
-            <artifactId>mall-common</artifactId>
+            <artifactId>mall-shop-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>

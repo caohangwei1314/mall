@@ -48,7 +48,7 @@
         		<button class="btn btn-primary btn-block" type="submit" id="buyButton">立即秒杀</button>
         		<input type="hidden" name="goodsId"  id="goodsId" />
         	</form>-->
-        	<button class="btn btn-primary btn-block" type="button" id="buyButton"onclick="doMiaosha()">立即秒杀</button>
+        	<button class="btn btn-primary btn-block" type="button" id="buyButton"onclick="getPath()">立即秒杀</button>
         	<input type="hidden" name="goodsId"  id="goodsId" />
         </td>
      </tr>
@@ -69,16 +69,54 @@
 </body>
 <script>
 
-function doMiaosha(){
+function getSpikeResult(goodsId){
+    g_showLoading();
+    $.ajax({
+        url:"/goods/spike/result",
+        type:"GET",
+        data:{
+            goodsId:$("#goodsId").val(),
+        },
+        success:function (data) {
+            debugger;
+            if(data.code == 1){
+                var result = data.data;
+                if(result < 0){
+                    layer.msg("秒杀失败");
+                }else if(result == 0){
+                    setTimeout(function () {
+                        getSpikeResult(goodsId)
+                    },200)
+                }else {
+                    layer.confirm("秒杀成功",{btn:["确定","取消"]},
+                    function () {
+                        window.location.href = "/order_detail.htm?orderId="+result;
+                    },
+                    function () {
+                        layer.closeAll();
+                    });
+                }
+            }else {
+                layer.msg("秒杀错误");
+            }
+        },
+        error:function () {
+            layer.msg("错误");
+        }
+    })
+}
+
+function doMiaosha(path){
 	$.ajax({
-		url:"/goods/spike",
+		url:"/goods/spike/" + path,
 		type:"POST",
 		data:{
 			goodsId:$("#goodsId").val(),
 		},
 		success:function(data){
+            debugger;
 			if(data.code == 1){
-				window.location.href="/order_detail.htm?orderId="+data.data.id;
+				getSpikeResult($("#goodsId").val());
 			}else{
 				layer.msg(data.msg);
 			}
@@ -90,10 +128,27 @@ function doMiaosha(){
 	
 }
 
+function getPath() {
+    $.ajax({
+        url:"/goods/spike/path",
+        type:"GET",
+        data:{
+            goodsId:$("#goodsId").val(),
+        },
+        success:function (data) {
+            if(data.code == 1){
+                doMiaosha(data.data);
+            }else {
+                layer.msg("获取路径错误");
+            }
+        }
+    });
+}
+
 function render(detail){
     debugger;
 	var miaoshaStatus = detail.status;
-	var  remainSeconds = detail.remainSeconds;
+	var remainSeconds = detail.remainSeconds;
 	var goods = detail.shopSpikeGoodsDetail;
 	var user = detail.ucenterUser;
 	if(user){

@@ -1,10 +1,12 @@
 package cn.caohangwei.mall.demo.controller;
 
 import cn.caohangwei.mall.common.base.BaseResult;
+import cn.caohangwei.mall.common.base.BaseResultEnum;
 import cn.caohangwei.mall.common.util.RedisUtil;
 import cn.caohangwei.mall.demo.config.DemoKey;
 import cn.caohangwei.mall.demo.domain.User;
 import cn.caohangwei.mall.demo.service.DemoService;
+import cn.caohangwei.mall.mq.base.RabbitMQSender;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,9 @@ public class DemoController {
 
     @Autowired
     private DemoService demoService;
+
+    @Autowired
+    private RabbitMQSender rabbitMQSender;
 
     @ApiOperation("redis Object 赋值")
     @RequestMapping(value = "redis/setObject",method = RequestMethod.POST)
@@ -37,6 +42,13 @@ public class DemoController {
     public BaseResult redisGet(@RequestParam("value") String value){
         Integer result = RedisUtil.get(DemoKey.getById,value,Integer.class);
         return new BaseResult(1,"success",result);
+    }
+
+    @ApiOperation("Rabbit MQ Send")
+    @RequestMapping(value = "/mq",method = RequestMethod.GET)
+    public BaseResult sendMQ(){
+        rabbitMQSender.send("hello");
+        return new BaseResult(BaseResultEnum.SUCCESS,null);
     }
 
 }

@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>cn.caohangwei</groupId>
-            <artifactId>mall-common</artifactId>
+            <artifactId>mall-mq</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>

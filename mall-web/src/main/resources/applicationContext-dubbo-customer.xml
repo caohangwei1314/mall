@@ -11,7 +11,7 @@
     <dubbo:registry address="zookeeper://localhost:2181?client=zkclient" />
 
     <!--consumer 默认配置-->
-    <dubbo:consumer connections="1000" timeout="100000"/>
+    <dubbo:consumer connections="1000" timeout="100000" check="false"/>
 
     <!-- 生成远程服务代理，可以和本地bean一样使用demoService -->
 

@@ -14,9 +14,8 @@
     <dependencies>
         <dependency>
             <groupId>cn.caohangwei</groupId>
-            <artifactId>mall-shop-dao</artifactId>
+            <artifactId>mall-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
-
 </project>

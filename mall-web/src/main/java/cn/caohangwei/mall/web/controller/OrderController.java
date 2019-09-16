@@ -8,7 +8,7 @@ import cn.caohangwei.mall.shop.rpc.api.ShopGoodsService;
 import cn.caohangwei.mall.shop.rpc.api.ShopOrderInfoService;
 import cn.caohangwei.mall.shop.rpc.api.ShopSpikeOrderService;
 import cn.caohangwei.mall.ucenter.dao.model.UcenterUser;
-import cn.caohangwei.mall.web.config.OrderDetail;
+import cn.caohangwei.mall.web.base.OrderDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

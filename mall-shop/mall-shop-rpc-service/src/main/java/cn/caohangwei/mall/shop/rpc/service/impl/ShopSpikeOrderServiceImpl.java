@@ -2,6 +2,8 @@ package cn.caohangwei.mall.shop.rpc.service.impl;
 
 import cn.caohangwei.mall.common.annotation.BaseService;
 import cn.caohangwei.mall.common.base.BaseServiceImpl;
+import cn.caohangwei.mall.common.util.RedisUtil;
+import cn.caohangwei.mall.shop.common.base.ShopGoodsPrefix;
 import cn.caohangwei.mall.shop.dao.mapper.ShopSpikeOrderMapper;
 import cn.caohangwei.mall.shop.dao.model.ShopSpikeOrder;
 import cn.caohangwei.mall.shop.dao.model.ShopSpikeOrderExample;
@@ -11,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
 * ShopSpikeOrderService实现
@@ -25,4 +29,27 @@ public class ShopSpikeOrderServiceImpl extends BaseServiceImpl<ShopSpikeOrderMap
     @Autowired
     ShopSpikeOrderMapper shopSpikeOrderMapper;
 
+    public ShopSpikeOrder getSpikeOrderByUserIdGoodsId(Long userId, Long goodsId) {
+        ShopSpikeOrderExample example = new ShopSpikeOrderExample();
+        example.createCriteria().andUserIdEqualTo(userId).andGoodsIdEqualTo(goodsId);
+        List<ShopSpikeOrder> list = shopSpikeOrderMapper.selectByExample(example);
+        if(null != list && list.size() > 0){
+            return list.get(0);
+        }
+        return null;
+    }
+
+    public Long getSpikeResult(Long userId, Long goodsId) {
+        ShopSpikeOrder order = getSpikeOrderByUserIdGoodsId(userId, goodsId);
+        if(order != null){
+            return order.getOrderId();
+        }else {
+            boolean flag = RedisUtil.exists(ShopGoodsPrefix.SPIKE_ORDER_OVER,""+goodsId);
+            if(flag){
+                return -1L;
+            }else {
+                return 0L;
+            }
+        }
+    }
 }

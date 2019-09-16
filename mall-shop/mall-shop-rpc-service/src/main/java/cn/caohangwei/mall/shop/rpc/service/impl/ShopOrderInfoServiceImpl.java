@@ -2,6 +2,8 @@ package cn.caohangwei.mall.shop.rpc.service.impl;
 
 import cn.caohangwei.mall.common.annotation.BaseService;
 import cn.caohangwei.mall.common.base.BaseServiceImpl;
+import cn.caohangwei.mall.common.util.RedisUtil;
+import cn.caohangwei.mall.shop.common.base.ShopGoodsPrefix;
 import cn.caohangwei.mall.shop.dao.base.ShopSpikeGoodsDetail;
 import cn.caohangwei.mall.shop.dao.mapper.ShopGoodsMapper;
 import cn.caohangwei.mall.shop.dao.mapper.ShopOrderInfoMapper;
@@ -16,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.List;
 
 
 /**
@@ -43,23 +44,28 @@ public class ShopOrderInfoServiceImpl extends BaseServiceImpl<ShopOrderInfoMappe
 
     @Transactional
     public ShopOrderInfo spikeGoods(Long userId, ShopSpikeGoodsDetail goods) {
-        shopSpikeGoodsMapper.incrGoodsStockByGoodsId(goods.getId());
-        ShopOrderInfo orderInfo = new ShopOrderInfo();
-        orderInfo.setUserId(userId);
-        orderInfo.setGoodsId(goods.getId());
-        orderInfo.setDeliveryAddressId(0L);
-        orderInfo.setGoodsName(goods.getName());
-        orderInfo.setGoodsCount(1);
-        orderInfo.setGoodsPrice(goods.getSpikePrice());
-        orderInfo.setOrderChannel((byte) 0);
-        orderInfo.setStatus((byte) 0);
-        orderInfo.setCreateDate(new Date());
-        shopOrderInfoMapper.insertSelective(orderInfo);
-        ShopSpikeOrder shopSpikeOrder = new ShopSpikeOrder();
-        shopSpikeOrder.setGoodsId(goods.getId());
-        shopSpikeOrder.setOrderId(orderInfo.getId());
-        shopSpikeOrder.setUserId(userId);
-        shopSpikeOrderMapper.insert(shopSpikeOrder);
+        ShopOrderInfo orderInfo = null;
+        if (shopSpikeGoodsMapper.incrGoodsStockByGoodsId(goods.getId()) > 0) {
+            orderInfo = new ShopOrderInfo();
+            orderInfo.setUserId(userId);
+            orderInfo.setGoodsId(goods.getId());
+            orderInfo.setDeliveryAddressId(0L);
+            orderInfo.setGoodsName(goods.getName());
+            orderInfo.setGoodsCount(1);
+            orderInfo.setGoodsPrice(goods.getSpikePrice());
+            orderInfo.setOrderChannel((byte) 0);
+            orderInfo.setStatus((byte) 0);
+            orderInfo.setCreateDate(new Date());
+            shopOrderInfoMapper.insertSelective(orderInfo);
+            ShopSpikeOrder shopSpikeOrder = new ShopSpikeOrder();
+            shopSpikeOrder.setGoodsId(goods.getId());
+            shopSpikeOrder.setOrderId(orderInfo.getId());
+            shopSpikeOrder.setUserId(userId);
+            shopSpikeOrderMapper.insert(shopSpikeOrder);
+            RedisUtil.set(ShopGoodsPrefix.SPIKE_ORDER,"" + goods.getId() + userId,shopSpikeOrder);
+        } else {
+            RedisUtil.set(ShopGoodsPrefix.SPIKE_ORDER_OVER, "" + goods.getId(), true);
+        }
         return orderInfo;
     }
 }
