@@ -1,4 +1,4 @@
-package cn.caohangwei.mall.web.config;
+package cn.caohangwei.mall.shop.dao.base;
 
 import cn.caohangwei.mall.shop.dao.base.ShopSpikeGoodsDetail;
 import cn.caohangwei.mall.ucenter.dao.model.UcenterUser;

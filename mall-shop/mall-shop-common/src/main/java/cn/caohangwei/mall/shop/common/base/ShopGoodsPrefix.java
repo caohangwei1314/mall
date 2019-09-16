@@ -1,4 +1,4 @@
-package cn.caohangwei.mall.web.config;
+package cn.caohangwei.mall.shop.common.base;
 
 import cn.caohangwei.mall.common.base.BasePrefix;
 
