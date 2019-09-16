@@ -18,5 +18,11 @@ public class ShopGoodsPrefix extends BasePrefix {
 
     public static ShopGoodsPrefix VERIFY_CODE = new ShopGoodsPrefix("verify-code",60);
 
+    public static ShopGoodsPrefix SPIKE_ACCESS = new ShopGoodsPrefix("spike-access",60);
+
+    public static ShopGoodsPrefix spikeAccess(int expireSeconds){
+        return new ShopGoodsPrefix("spike-access",expireSeconds);
+    }
+
     public ShopGoodsPrefix(String prefix, int expireTime){super(prefix,expireTime);}
 }

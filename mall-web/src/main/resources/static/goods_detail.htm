@@ -144,7 +144,7 @@ function getPath() {
             if(data.code == 1){
                 doMiaosha(data.data);
             }else {
-                layer.msg("获取路径错误");
+                layer.msg(data.msg);
             }
         }
     });

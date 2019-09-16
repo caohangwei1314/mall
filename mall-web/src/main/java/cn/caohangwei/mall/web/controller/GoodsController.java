@@ -18,6 +18,7 @@ import cn.caohangwei.mall.web.base.GoodsDetail;
 import cn.caohangwei.mall.shop.common.base.ShopGoodsPrefix;
 import cn.caohangwei.mall.web.base.RabbitMQSender;
 import cn.caohangwei.mall.web.base.SpikeMessages;
+import cn.caohangwei.mall.web.config.AccessLimit;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -119,25 +120,25 @@ public class GoodsController extends BaseController {
         if (null == user) {
             return new BaseResult(BaseResultEnum.SESSION_ERROR, null);
         }
-        String str = RedisUtil.get(ShopGoodsPrefix.SPIKE_GOODS_PATH,user.getId()+"_"+goodsId,String.class);
+        String str = RedisUtil.get(ShopGoodsPrefix.SPIKE_GOODS_PATH, user.getId() + "_" + goodsId, String.class);
         path = JSONUtil.beanToString(path);
-        if(!str.equals(path)){
-            return new BaseResult(BaseResultEnum.PATH_NOT_EXISTS,null);
+        if (!str.equals(path)) {
+            return new BaseResult(BaseResultEnum.PATH_NOT_EXISTS, null);
         }
         //内存标记，减少redis访问
-        if(map.get(goodsId)){
+        if (map.get(goodsId)) {
             return new BaseResult(BaseResultEnum.SPIKE_ERROR, null);
         }
         long stock = RedisUtil.decr(ShopGoodsPrefix.SPIKE_GOODS_STOCK, "" + goodsId);
         //预减库存
         if (stock <= 0) {
-            map.put(goodsId,true);
+            map.put(goodsId, true);
             return new BaseResult(BaseResultEnum.SPIKE_ERROR, null);
         }
         //判断是否秒杀过
-        ShopSpikeOrder shopSpikeOrder = RedisUtil.get(ShopGoodsPrefix.SPIKE_ORDER,"" + goodsId + user.getId(),ShopSpikeOrder.class);
-        if(null != shopSpikeOrder){
-            return new BaseResult(BaseResultEnum.PURCHASED_ERROR,null);
+        ShopSpikeOrder shopSpikeOrder = RedisUtil.get(ShopGoodsPrefix.SPIKE_ORDER, "" + goodsId + user.getId(), ShopSpikeOrder.class);
+        if (null != shopSpikeOrder) {
+            return new BaseResult(BaseResultEnum.PURCHASED_ERROR, null);
         }
         //入队
         SpikeMessages messages = new SpikeMessages();
@@ -147,36 +148,51 @@ public class GoodsController extends BaseController {
         return new BaseResult(BaseResultEnum.SUCCESS, null);
     }
 
-    @RequestMapping(value = "spike/result",method = RequestMethod.GET)
+    @RequestMapping(value = "spike/result", method = RequestMethod.GET)
     @ResponseBody
-    public BaseResult spikeResult(UcenterUser user,@RequestParam("goodsId") Long goodsId){
-        if(null == user){
-            return new BaseResult(BaseResultEnum.SESSION_ERROR,null);
+    public BaseResult spikeResult(UcenterUser user, @RequestParam("goodsId") Long goodsId) {
+        if (null == user) {
+            return new BaseResult(BaseResultEnum.SESSION_ERROR, null);
         }
-        long result = shopSpikeOrderService.getSpikeResult(user.getId(),goodsId);
-        return new BaseResult(BaseResultEnum.SUCCESS,result);
+        long result = shopSpikeOrderService.getSpikeResult(user.getId(), goodsId);
+        return new BaseResult(BaseResultEnum.SUCCESS, result);
     }
 
-    @RequestMapping(value = "/spike/path",method = RequestMethod.GET)
+    @RequestMapping(value = "/spike/path", method = RequestMethod.GET)
     @ResponseBody
+    @AccessLimit(seconds = 5,maxCount = 5,needLogin = true)
     public BaseResult getSpikeGoodsPath(UcenterUser user,
                                         @RequestParam("goodsId") Long goodsId,
-                                        @RequestParam("verifyCode") Integer verifyCode){
-        Integer code = RedisUtil.get(ShopGoodsPrefix.VERIFY_CODE,user.getId()+"_"+goodsId,Integer.class);
-        if(code == null || code-verifyCode != 0){
-            return new BaseResult(BaseResultEnum.VERIFY_ERROR,null);
+                                        @RequestParam(value = "verifyCode",defaultValue = "0") Integer verifyCode,
+                                        HttpServletRequest request) {
+        if (null == user) {
+            return new BaseResult(BaseResultEnum.SESSION_ERROR, null);
         }
-        RedisUtil.delete(ShopGoodsPrefix.VERIFY_CODE,user.getId()+"_"+goodsId);
+//        String uri = request.getRequestURI();
+//        String key = uri + "_" + user.getId();
+//        Integer count = RedisUtil.get(ShopGoodsPrefix.SPIKE_ACCESS, key, Integer.class);
+//        if (null == count) {
+//            RedisUtil.set(ShopGoodsPrefix.SPIKE_ACCESS, key, 1);
+//        }else if (count < 5){
+//            RedisUtil.incr(ShopGoodsPrefix.SPIKE_ACCESS, key);
+//        }else {
+//            return new BaseResult(BaseResultEnum.ACCESS_ERROR, null);
+//        }
+        Integer code = RedisUtil.get(ShopGoodsPrefix.VERIFY_CODE, user.getId() + "_" + goodsId, Integer.class);
+        if (code == null || code - verifyCode != 0) {
+            return new BaseResult(BaseResultEnum.VERIFY_ERROR, null);
+        }
+        RedisUtil.delete(ShopGoodsPrefix.VERIFY_CODE, user.getId() + "_" + goodsId);
         String str = MD5Util.md5(UUIDUtil.randomUUID() + "embassy");
-        RedisUtil.set(ShopGoodsPrefix.SPIKE_GOODS_PATH,user.getId() + "_" + goodsId,str);
-        return new BaseResult(BaseResultEnum.SUCCESS,str);
+        RedisUtil.set(ShopGoodsPrefix.SPIKE_GOODS_PATH, user.getId() + "_" + goodsId, str);
+        return new BaseResult(BaseResultEnum.SUCCESS, str);
     }
 
-    private static final char[] op = {'+','-','*'};
+    private static final char[] op = {'+', '-', '*'};
 
-    @RequestMapping(value = "/spike/verifyCode",method = RequestMethod.GET)
+    @RequestMapping(value = "/spike/verifyCode", method = RequestMethod.GET)
     @ResponseBody
-    public BaseResult getVerifyCode(UcenterUser user,@RequestParam("goodsId") Long goodsId,HttpServletResponse response){
+    public BaseResult getVerifyCode(UcenterUser user, @RequestParam("goodsId") Long goodsId, HttpServletResponse response) {
         int width = 80;
         int height = 32;
         //create the image
@@ -216,16 +232,16 @@ public class GoodsController extends BaseController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        RedisUtil.set(ShopGoodsPrefix.VERIFY_CODE, user.getId()+"_"+goodsId, rnd);
+        RedisUtil.set(ShopGoodsPrefix.VERIFY_CODE, user.getId() + "_" + goodsId, rnd);
         try {
             OutputStream out = response.getOutputStream();
             ImageIO.write(image, "JPEG", out);
             out.flush();
             out.close();
             return null;
-        }catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            return new BaseResult(BaseResultEnum.SPIKE_ERROR,null);
+            return new BaseResult(BaseResultEnum.SPIKE_ERROR, null);
         }
     }
 }

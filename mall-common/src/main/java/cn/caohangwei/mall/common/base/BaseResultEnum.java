@@ -15,7 +15,8 @@ public enum  BaseResultEnum {
     SESSION_ERROR(50009,"请登录"),
     ORDER_NOT_EXISTS(50010,"订单不存在"),
     PATH_NOT_EXISTS(50011,"路径不存在"),
-    VERIFY_ERROR(50012,"验证码错误");
+    VERIFY_ERROR(50012,"验证码错误"),
+    ACCESS_ERROR(50013,"访问过于频繁");
 
     BaseResultEnum(int coed,String msg){
         this.code = coed;
